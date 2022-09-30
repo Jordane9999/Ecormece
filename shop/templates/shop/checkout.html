@@ -1,0 +1,105 @@
+{% extends 'shop/base.html' %} {% block title %}
+<title>Verrification</title>
+{% endblock %} {% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <ul class="list-group" id="item-list">
+            <h3 class="text-center">Voici votre listes</h3>
+
+        </ul>
+    </div>
+</div>
+<!-- ----------------Formulaire de commande--------------------- -->
+<div class="row">
+    <div class="col-md-12">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="items" name="items">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputnom">Nom</label>
+                    <input type="text" name="nom" class="form-control" id="nom" placeholder="Roberto">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputemail">Email</label>
+                    <input type="email" name="email" class="form-control" id="email" placeholder="youngrober@gmail.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input type="text" name="address" class="form-control" id="address" placeholder="Lomé">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">Ville</label>
+                    <input type="text" name="ville" class="form-control" id="ville">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputState">Pays</label>
+                    <select id="pays" name="pays" class="form-control">
+                        <option selected>Togo</option>
+                        <option>Angola</option>
+                        <option>Bénin</option>
+                        <option>Botswana</option>
+                        <option>Burkina</option>
+                        <option>Burundi</option>
+                        <option>Cameroun</option>
+                        <option>Cap-Vert</option>                  
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="zipcod">Zip</label>
+                    <input type="text" name="zipcode" class="form-control" id="zipcode">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="total">Somme total a payer</label>
+                    <input type="readonly" name="total" class="form-control btn-dark text-warning" id="total">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Commander</button>
+        </form>
+    </div>
+</div>
+{% endblock %} {% block js %}
+<script type="text/javascript">
+    if (localStorage.getItem('panier') == null) {
+        var panier = {};
+    } else {
+        panier = JSON.parse(localStorage.getItem('panier'));
+    }
+    console.log(panier)
+
+    var totalQ = 0;
+    var totalP = 0;
+    for (item in panier) {
+        let nom = panier[item][1];
+        let quantite = panier[item][0];
+        let prix = panier[item][2];
+        let itemString = `<li style="font-weight: bold;" class="list-group-item d-flex justify-content-between align-items-center">
+            ${nom}
+             <span class="badge badge-primary badge-pill">QTE ${quantite}</span>
+             <span class="badge badge-warning badge-pill">$ ${prix}</span>
+        </li>`;
+        totalQ += quantite;
+        totalP += prix;
+        /*console.log(prix);
+        console.log(nom);
+        console.log(quantite);*/
+        console.log(totalP);
+        console.log(totalQ);
+        $('#item-list').append(itemString);
+    }
+    var itemString = `<li style="font-weight: bold;" class="list-group-item d-flex justify-content-between align-items-center">
+         <span class="bg-info bg-gradient">TOTAL des Choix :</span>
+         <span class="badge badge-danger badge-pill">QTE ${totalQ}</span>
+         <span class="badge badge-success badge-pill">$ ${totalP}</span>
+    </li>`;
+    $('#item-list').append(itemString);
+
+    //afficher les choses sur la page html
+    $('#items').val(JSON.stringify(panier));
+    $('#total').val("$" + totalP);
+</script>
+{% endblock %}
